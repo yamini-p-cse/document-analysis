@@ -33,6 +33,13 @@ class DocumentRequest(BaseModel):
     fileType: str
     fileBase64: str
 
+def fix_base64_padding(b64_string: str) -> str:
+    """Fix base64 padding errors from testers"""
+    missing_padding = len(b64_string) % 4
+    if missing_padding:
+        b64_string += '=' * (4 - missing_padding)
+    return b64_string
+
 def ai_summary(text: str, max_length: int = 150) -> str:
     """AI-powered summarization"""
     try:
@@ -110,7 +117,8 @@ async def analyze_document(request: DocumentRequest, x_api_key: str = Header(Non
     
     file_path = None
     try:
-        file_bytes = base64.b64decode(request.fileBase64)
+        # FIXED LINE: Added base64 padding fix
+        file_bytes = base64.b64decode(fix_base64_padding(request.fileBase64))
         file_extension = request.fileType.lower()
         
         # Handle different file types
