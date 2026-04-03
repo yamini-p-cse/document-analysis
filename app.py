@@ -141,12 +141,13 @@ async def analyze_document(request: DocumentRequest, x_api_key: str = Header(Non
         sentiment = ai_sentiment(text)
         entities = ai_entities(text)
         
+        # ✅ FIXED: "ai_summary" → "summary" (Hackathon requirement)
         return {
             "status": "success",
             "fileName": request.fileName,
             "fileType": request.fileType,
             "processingTime": "2-5s",
-            "ai_summary": summary,
+            "summary": summary,           # ✅ FIXED FIELD NAME
             "sentiment": sentiment,
             "entities": entities,
             "word_count": len(text.split()),
@@ -188,9 +189,10 @@ async def upload_file(
     summary = ai_summary(text)
     sentiment = ai_sentiment(text)
     
+    # ✅ FIXED: "ai_summary" → "summary"
     return {
         "filename": file.filename,
-        "ai_summary": summary,
+        "summary": summary,           # ✅ FIXED FIELD NAME
         "sentiment": sentiment,
         "word_count": len(text.split()) if text else 0,
         "text_preview": text[:200] + "..." if text else "No text extracted"
